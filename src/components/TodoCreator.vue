@@ -1,18 +1,38 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 
-const todo = ref("");
+const emit = defineEmits(["createTodo"]);
+
+const todoState = reactive({
+  todo: "",
+  invalid: false,
+  errorMessage: "",
+});
+
+const createTodo = () => {
+  if (todoState.todo === "") {
+    todoState.invalid = true;
+    todoState.errorMessage = "Please enter a todo";
+    return;
+  }
+  emit("createTodo", todoState.todo);
+  console.log(todoState.todo);
+  todoState.todo = "";
+  todoState.invalid = false;
+};
 </script>
 
 <template>
-  <div class="input-wrap">
+  <div class="input-wrap" :class="{ 'input-error' : todoState.invalid }">
     <input
       type="text"
       placeholder="Enter a todo"
-      v-model="todo"
+      v-model="todoState.todo"
+      @keyup.enter="createTodo()"
     />
-    <button>Create</button>
+    <button @click="createTodo()">Create</button>
   </div>
+  <p v-show="todoState.invalid" class="error">{{ todoState.errorMessage }}</p>
 </template>
 
 <style lang="scss" scoped>
@@ -20,6 +40,10 @@ const todo = ref("");
   display: flex;
   transition: 250ms ease;
   border: 2px solid #41b080;
+
+  &.input-error {
+    border-color: red;
+  }
 
   &:focus-within {
     box-shadow: 0 -4px 6px -1px rgb(0 0 0 / 0.1),
@@ -40,5 +64,12 @@ const todo = ref("");
     padding: 8px 16px;
     border: none;
   }
+}
+
+.error-msg {
+  margin-top: 6px;
+  font-size: 12px;
+  text-align: center;
+  color: red;
 }
 </style>

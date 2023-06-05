@@ -1,13 +1,29 @@
 <script setup lang="ts">
 import TodoCreator from '@/components/TodoCreator.vue';
+import { ref } from 'vue';
 
+type Todo = {
+  id: number;
+  todo: string;
+  completed: boolean;
+  isEditing: boolean;
+}
+const todoList = ref<Todo[]>([]);
 
+const createTodo = (todo: string) => {
+  todoList.value.push({
+    id: todoList.value.length + 1,
+    todo,
+    completed: false,
+    isEditing: false,
+  });
+};
 </script>
 
 <template>
   <main>
     <h1>Create Todo</h1>
-    <TodoCreator />
+    <TodoCreator @create-todo="createTodo" />
     <TodoList />
   </main>
 </template>
