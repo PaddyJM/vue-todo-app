@@ -4,7 +4,7 @@ import TodoHeader from "./components/TodoHeader.vue";
 </script>
 
 <template>
-  <TodoHeader msg="hello" />
+  <TodoHeader msg="Vue Todo App" />
   <RouterView />
 </template>
 
