@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import TodoCreator from '@/components/TodoCreator.vue';
+import TodoItem from '@/components/TodoItem.vue';
 import { ref } from 'vue';
 
 type Todo = {
@@ -24,7 +25,9 @@ const createTodo = (todo: string) => {
   <main>
     <h1>Create Todo</h1>
     <TodoCreator @create-todo="createTodo" />
-    <TodoList />
+    <ul>
+      <TodoItem v-for="todo in todoList" :key="todo.id" :todo="todo" />
+    </ul>
   </main>
 </template>
 
