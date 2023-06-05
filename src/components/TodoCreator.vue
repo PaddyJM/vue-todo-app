@@ -31,7 +31,7 @@ const createTodo = () => {
       v-model="todoState.todo"
       @keyup.enter="createTodo()"
     />
-    <TodoButton @click="createTodo()">Create</TodoButton>
+    <TodoButton @click="createTodo()" />
   </div>
   <p v-show="todoState.invalid" class="error">{{ todoState.errorMessage }}</p>
 </template>
