@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
 
-const props = defineProps({todo: {
+defineProps({todo: {
     type: Object,
     required: true
   },
