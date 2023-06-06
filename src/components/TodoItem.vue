@@ -11,7 +11,7 @@ defineProps({
     required: true
   }
 })
-defineEmits(['toggle-complete'])
+defineEmits(['toggle-complete', 'toggle-edit'])
 </script>
 
 <template>
@@ -29,7 +29,7 @@ defineEmits(['toggle-complete'])
         color="green"
         :height="25"
       />
-      <Icon icon="mdi:pencil-outline" v-else class="icon" color="blue" :height="25" />
+      <Icon icon="mdi:pencil-outline" v-else class="icon" color="blue" :height="25" @click="$emit('toggle-edit', index)" />
       <Icon icon="mdi:trash-outline" class="icon" color="gray" :height="25" />
     </div>
   </li>
