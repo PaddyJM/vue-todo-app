@@ -1,30 +1,30 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
-import TodoButton from './TodoButton.vue';
+import { reactive } from 'vue'
+import TodoButton from './TodoButton.vue'
 
-const emit = defineEmits(["createTodo"]);
+const emit = defineEmits(['createTodo'])
 
 const todoState = reactive({
-  todo: "",
+  todo: '',
   invalid: false,
-  errorMessage: "",
-});
+  errorMessage: ''
+})
 
 const createTodo = () => {
-  if (todoState.todo === "") {
-    todoState.invalid = true;
-    todoState.errorMessage = "Please enter a todo";
-    return;
+  if (todoState.todo === '') {
+    todoState.invalid = true
+    todoState.errorMessage = 'Please enter a todo'
+    return
   }
-  emit("createTodo", todoState.todo);
-  console.log(todoState.todo);
-  todoState.todo = "";
-  todoState.invalid = false;
-};
+  emit('createTodo', todoState.todo)
+  console.log(todoState.todo)
+  todoState.todo = ''
+  todoState.invalid = false
+}
 </script>
 
 <template>
-  <div class="input-wrap" :class="{ 'input-error' : todoState.invalid }">
+  <div class="input-wrap" :class="{ 'input-error': todoState.invalid }">
     <input
       type="text"
       placeholder="Enter a todo"
@@ -47,8 +47,7 @@ const createTodo = () => {
   }
 
   &:focus-within {
-    box-shadow: 0 -4px 6px -1px rgb(0 0 0 / 0.1),
-      0 -2px 4px -2px rgb(0 0 0 / 0.1);
+    box-shadow: 0 -4px 6px -1px rgb(0 0 0 / 0.1), 0 -2px 4px -2px rgb(0 0 0 / 0.1);
   }
 
   input {

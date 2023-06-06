@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import TodoCreator from '@/components/TodoCreator.vue';
-import TodoItem from '@/components/TodoItem.vue';
-import { Icon } from '@iconify/vue/dist/iconify.js';
-import { ref } from 'vue';
+import TodoCreator from '@/components/TodoCreator.vue'
+import TodoItem from '@/components/TodoItem.vue'
+import { Icon } from '@iconify/vue/dist/iconify.js'
+import { ref } from 'vue'
 
 type Todo = {
-  id: number;
-  todo: string;
-  completed: boolean;
-  isEditing: boolean;
+  id: number
+  todo: string
+  completed: boolean
+  isEditing: boolean
 }
-const todoList = ref<Todo[]>([]);
+const todoList = ref<Todo[]>([])
 
 const createTodo = (todo: string) => {
   todoList.value.push({
     id: todoList.value.length + 1,
     todo,
     completed: false,
-    isEditing: false,
-  });
-};
+    isEditing: false
+  })
+}
 
 const toggleTodoComplete = (index: number) => {
-  todoList.value[index].completed = !todoList.value[index].completed;
-};
+  todoList.value[index].completed = !todoList.value[index].completed
+}
 </script>
 
 <template>
@@ -31,7 +31,13 @@ const toggleTodoComplete = (index: number) => {
     <h1>Create Todo</h1>
     <TodoCreator @create-todo="createTodo" />
     <ul class="todo-list" v-if="todoList.length > 0">
-      <TodoItem v-for="(todo, index) in todoList" :key="todo.id" :todo="todo" :index="index" @toggle-complete="toggleTodoComplete" />
+      <TodoItem
+        v-for="(todo, index) in todoList"
+        :key="todo.id"
+        :todo="todo"
+        :index="index"
+        @toggle-complete="toggleTodoComplete"
+      />
     </ul>
     <p class="todos-msg" v-else>
       <Icon icon="emojione:sad-but-relieved-face" class="icon" />

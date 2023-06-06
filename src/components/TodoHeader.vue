@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
+import { RouterLink } from 'vue-router'
 
-  defineProps<{msg: string}>()
+defineProps<{ msg: string }>()
 </script>
-
 
 <template>
   <header>
     <nav class="container">
-      <div class='branding'>
+      <div class="branding">
         <img src="../assets/Vue_Logo_Black.png" />
         <h1>{{ msg }}</h1>
       </div>
@@ -21,7 +20,7 @@ import { RouterLink } from 'vue-router';
 </template>
 
 <style lang="scss" scoped>
-  header {
+header {
   background-color: #f1f1f1;
   nav {
     display: flex;

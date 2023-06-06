@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import TodoHeader from "./components/TodoHeader.vue";
+import TodoHeader from './components/TodoHeader.vue'
 </script>
 
 <template>
@@ -12,7 +12,7 @@ import TodoHeader from "./components/TodoHeader.vue";
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap');
 
 * {
-  font-family: "Rubik", sans-serif;
+  font-family: 'Rubik', sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;

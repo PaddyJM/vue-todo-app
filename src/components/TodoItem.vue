@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue';
+import { Icon } from '@iconify/vue'
 
-defineProps({todo: {
+defineProps({
+  todo: {
     type: Object,
     required: true
   },
@@ -10,7 +11,7 @@ defineProps({todo: {
     required: true
   }
 })
-defineEmits(["toggle-complete"]);
+defineEmits(['toggle-complete'])
 </script>
 
 <template>
@@ -18,16 +19,21 @@ defineEmits(["toggle-complete"]);
     <input type="checkbox" :checked="todo.isCompleted" @input="$emit('toggle-complete', index)" />
     <div class="todo">
       <input v-if="todo.isEditing" type="text" :value="todo.todo" />
-      <span v-else :class="{'completed-todo' : todo.completed }">{{ todo.todo }}</span>
+      <span v-else :class="{ 'completed-todo': todo.completed }">{{ todo.todo }}</span>
     </div>
     <div class="todo-actions">
-      <Icon icon="mdi:checkbox-outline" v-if="todo.isEditing" class='icon' color="green" :height="25" />
-      <Icon icon="mdi:pencil-outline" v-else class='icon' color="blue" :height="25" />
-      <Icon icon="mdi:trash-outline" class='icon' color="gray" :height="25" />
+      <Icon
+        icon="mdi:checkbox-outline"
+        v-if="todo.isEditing"
+        class="icon"
+        color="green"
+        :height="25"
+      />
+      <Icon icon="mdi:pencil-outline" v-else class="icon" color="blue" :height="25" />
+      <Icon icon="mdi:trash-outline" class="icon" color="gray" :height="25" />
     </div>
   </li>
 </template>
-
 
 <style lang="scss" scoped>
 li {
@@ -36,8 +42,7 @@ li {
   gap: 10px;
   padding: 16px 10px;
   background-color: #f1f1f1;
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
-    0 8px 10px -6px rgb(0 0 0 / 0.1);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 
   &:hover {
     .todo-actions {
@@ -45,7 +50,7 @@ li {
     }
   }
 
-  input[type="checkbox"] {
+  input[type='checkbox'] {
     appearance: none;
     width: 20px;
     height: 20px;
@@ -65,7 +70,7 @@ li {
       text-decoration: line-through;
     }
 
-    input[type="text"] {
+    input[type='text'] {
       width: 100%;
       padding: 2px 6px;
       border: 2px solid #41b080;
