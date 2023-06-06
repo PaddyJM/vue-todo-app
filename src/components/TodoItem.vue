@@ -11,14 +11,20 @@ defineProps({
     required: true
   }
 })
-defineEmits(['toggle-complete', 'toggle-edit'])
+defineEmits(['toggle-complete', 'toggle-edit', 'update-todo', 'delete-todo'])
 </script>
 
 <template>
   <li>
     <input type="checkbox" :checked="todo.isCompleted" @input="$emit('toggle-complete', index)" />
     <div class="todo">
-      <input v-if="todo.isEditing" type="text" :value="todo.todo" />
+      <input
+        v-if="todo.isEditing"
+        type="text"
+        :value="todo.todo"
+        @input="$emit('update-todo', ($event.target as HTMLInputElement).value, index)"
+        @keyup.enter="$emit('toggle-edit', index)"
+      />
       <span v-else :class="{ 'completed-todo': todo.completed }">{{ todo.todo }}</span>
     </div>
     <div class="todo-actions">
@@ -28,9 +34,17 @@ defineEmits(['toggle-complete', 'toggle-edit'])
         class="icon"
         color="green"
         :height="25"
+        @click="$emit('toggle-edit', index)"
       />
-      <Icon icon="mdi:pencil-outline" v-else class="icon" color="blue" :height="25" @click="$emit('toggle-edit', index)" />
-      <Icon icon="mdi:trash-outline" class="icon" color="gray" :height="25" />
+      <Icon
+        icon="mdi:pencil-outline"
+        v-else
+        class="icon"
+        color="blue"
+        :height="25"
+        @click="$emit('toggle-edit', index)"
+      />
+      <Icon icon="mdi:trash-outline" class="icon" color="gray" :height="25" @click="$emit('delete-todo', index)" />
     </div>
   </li>
 </template>
