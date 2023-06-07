@@ -25,6 +25,7 @@ export class TodoApiStack extends Stack {
 
     new aws_dynamodb.Table(this, 'TodoTable', {
       partitionKey: { name: 'id', type: aws_dynamodb.AttributeType.STRING },
+      tableName: 'TodoTable',
     })
 
     new CfnOutput(this, "Endpoint", { value: `http://localhost:4566/restapis/${api.restApiId}/prod/_user_request_${resource.path}` })

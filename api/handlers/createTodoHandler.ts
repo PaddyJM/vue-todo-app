@@ -1,4 +1,5 @@
 import { DynamoDB } from "@aws-sdk/client-dynamodb";
+import { marshall } from "@aws-sdk/util-dynamodb";
 import { 
   APIGatewayProxyEvent, 
   APIGatewayProxyResult 
@@ -11,16 +12,30 @@ const dynamoDBClient = new DynamoDB({
 export const handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
-  const response = await dynamoDBClient.putItem({
-    TableName: 'TodoApiStack-TodoTable585F1D6B-3a49e4a7',
-    Item: {
-      id: { S: '123' },
-      name: { S: 'test' }
-    }
+  if (!event.body) {
+    throw new Error('No body provided');
+  }
+  const data = JSON.parse(event.body);
+  const record = marshall({
+    list: data.todos,
+    id: "1",
   });
+  let response;
+  let statusCode;
+  try {
+    response = await dynamoDBClient.putItem({
+      TableName: 'TodoTable',
+      Item: record,
+    });
+    statusCode = 200;
+  } catch (error) {
+    console.log(error);
+    response = error;
+    statusCode = 500;
+  }
   return {
     isBase64Encoded: false,
-    statusCode: 200,
+    statusCode,
     body: JSON.stringify(response),
     headers: {}
   }
