@@ -8,12 +8,24 @@ const dynamoDBClient = new DynamoDB({
   region: 'eu-west-2'
 })
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      body: '',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': '*',
+        'Access-Control-Allow-Headers': '*'
+      },
+      statusCode: 204
+    }
+  }
   if (!event.body) {
     throw new Error('No body provided')
   }
+
   const data = JSON.parse(event.body)
   const record = marshall({
-    id: "1",
+    id: '1',
     todos: data.todos
   })
   let response
@@ -30,9 +42,10 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     statusCode = 500
   }
   return {
-    isBase64Encoded: false,
-    statusCode,
     body: JSON.stringify(response),
-    headers: {}
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+    statusCode,
   }
 }

@@ -12,6 +12,18 @@ type Todo = {
 }
 const todoList = ref<Todo[]>([])
 
+const saveTodoList = async (todoList: Todo[]) => {
+  const response = await fetch('http://localhost:4566/restapis/rcwbnzfhs5/prod/_user_request_/todo', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify(todoList)
+  })
+  console.log(response)
+}
+
 const createTodo = (todo: string) => {
   todoList.value.push({
     id: todoList.value.length + 1,
@@ -19,6 +31,7 @@ const createTodo = (todo: string) => {
     completed: false,
     isEditing: false
   })
+  saveTodoList(todoList.value)
 }
 
 const toggleTodoComplete = (index: number) => {

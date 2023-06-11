@@ -3,10 +3,7 @@ import {
   Stack,
   StackProps,
   aws_apigateway,
-  aws_certificatemanager,
   aws_dynamodb,
-  aws_ec2,
-  aws_route53
 } from 'aws-cdk-lib'
 import { RestApi } from 'aws-cdk-lib/aws-apigateway'
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs'
@@ -52,11 +49,20 @@ export class TodoApiStack extends Stack {
       // }
     })
 
-    const lambdaIntegration = new aws_apigateway.LambdaIntegration(lambda)
+    const lambdaIntegration = new aws_apigateway.LambdaIntegration(lambda, {proxy: true})
 
     const resource = api.root.addResource('todo')
 
-    resource.addMethod('GET', lambdaIntegration)
+    resource.addMethod('PUT', lambdaIntegration)
+
+    /**
+     * It turns out that when deploying to localstack by setting the default CORS 
+     * options on the Rest API (above), the OPTIONS method is not implemented 
+     * on the correctly corresponding API Gateway resource. This is a workaround, 
+     * which is to manually add the OPTIONS method to the resource and handle 
+     * that method inside the lambda in accordance with the CORS spec.
+     */
+    resource.addMethod('OPTIONS', lambdaIntegration)
 
     new aws_dynamodb.Table(this, 'TodoTable', {
       partitionKey: { name: 'id', type: aws_dynamodb.AttributeType.STRING },
