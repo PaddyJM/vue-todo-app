@@ -69,6 +69,8 @@ export class TodoApiStack extends Stack {
 
     resource.addMethod('PUT', lambdaIntegration)
 
+    resource.addMethod('GET', lambdaIntegration)
+
     /**
      * It turns out that when deploying to localstack by setting the default CORS 
      * options on the Rest API (above), the OPTIONS method is not implemented 

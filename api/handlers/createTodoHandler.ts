@@ -1,5 +1,5 @@
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
-import { marshall } from '@aws-sdk/util-dynamodb'
+import { marshall, unmarshall } from '@aws-sdk/util-dynamodb'
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import { v4 as uuid } from 'uuid'
 
@@ -20,23 +20,43 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       statusCode: 204
     }
   }
-  if (!event.body) {
-    throw new Error('No body provided')
-  }
-
-  const data = JSON.parse(event.body)
-  const record = marshall({
-    id: '1',
-    todos: data.todoList
-  })
   let response
   let statusCode
   try {
-    response = await dynamoDBClient.putItem({
-      TableName: 'TodoTable',
-      Item: record
-    })
-    statusCode = 200
+    if(event.httpMethod === 'PUT') {
+      if (!event.body) {
+        throw new Error('No body provided')
+      }
+
+      const data = JSON.parse(event.body)
+      const record = marshall({
+        id: '1',
+        todoList: data.todoList
+      })
+      const x = await dynamoDBClient.putItem({
+        TableName: 'TodoTable',
+        Item: record
+      })
+      response = {
+        todoList: [
+          x
+        ]
+      }
+    } else if (event.httpMethod === 'GET') {
+      const x = await dynamoDBClient.getItem({
+        TableName: 'TodoTable',
+        Key: {
+          id: {
+            S: '1'
+          }
+        }
+      })
+      if(!x.Item) {
+        throw new Error('No item found')
+      }
+      response = unmarshall(x.Item)
+    }
+  statusCode = 200
   } catch (error) {
     console.log(error)
     response = error

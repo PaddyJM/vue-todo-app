@@ -2,7 +2,7 @@
 import TodoCreator from '@/components/TodoCreator.vue'
 import TodoItem from '@/components/TodoItem.vue'
 import { Icon } from '@iconify/vue/dist/iconify.js'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 type Todo = {
   id: number
@@ -11,6 +11,12 @@ type Todo = {
   isEditing: boolean
 }
 const todoList = ref<Todo[]>([])
+
+onMounted(async () => {
+  const response = await fetch('http://localhost:4566/restapis/229iygurim/prod/_user_request_/todo')
+  const data = await response.json()
+  todoList.value = data.todoList
+})
 
 const saveTodoList = async (todoList: Todo[]) => {
   const response = await fetch('http://localhost:4566/restapis/229iygurim/prod/_user_request_/todo', {
