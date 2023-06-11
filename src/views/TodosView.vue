@@ -13,13 +13,13 @@ type Todo = {
 const todoList = ref<Todo[]>([])
 
 const saveTodoList = async (todoList: Todo[]) => {
-  const response = await fetch('http://localhost:4566/restapis/rcwbnzfhs5/prod/_user_request_/todo', {
+  const response = await fetch('http://localhost:4566/restapis/229iygurim/prod/_user_request_/todo', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json'
     },
-    body: JSON.stringify(todoList)
+    body: JSON.stringify({ todoList })
   })
   console.log(response)
 }
