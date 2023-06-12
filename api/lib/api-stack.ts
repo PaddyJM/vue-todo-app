@@ -15,8 +15,8 @@ export class TodoApiStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props)
 
-    const lambda = new NodejsFunction(this, 'createTodoHandler', {
-      entry: path.join(__dirname, '../handlers/createTodoHandler.ts')
+    const lambda = new NodejsFunction(this, 'todoHandler', {
+      entry: path.join(__dirname, '../handlers/todoHandler.ts')
     })
 
     // const vpc = new aws_ec2.Vpc(this, 'myVpc', {
