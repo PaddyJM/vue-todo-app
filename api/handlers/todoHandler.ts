@@ -1,3 +1,4 @@
+import { client } from '@auth0/auth0-vue/dist/typings/plugin'
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb'
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
@@ -20,6 +21,12 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       statusCode: 204
     }
   }
+
+  if (!event.queryStringParameters?.clientId) {
+    throw new Error('No client id provided')
+  }
+  const clientId = event.queryStringParameters.clientId
+
   let response
   let statusCode
   try {
@@ -30,7 +37,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
       const data = JSON.parse(event.body)
       const record = marshall({
-        id: '1',
+        id: clientId,
         todoList: data.todoList
       })
       const x = await dynamoDBClient.putItem({
@@ -47,7 +54,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         TableName: 'TodoTable',
         Key: {
           id: {
-            S: '1'
+            S: clientId
           }
         }
       })

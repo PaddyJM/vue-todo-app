@@ -2,7 +2,7 @@
 import TodoCreator from '@/components/TodoCreator.vue'
 import TodoItem from '@/components/TodoItem.vue'
 import { Icon } from '@iconify/vue/dist/iconify.js'
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref, watchEffect } from 'vue'
 import { useAuth0 } from '@auth0/auth0-vue';
 
 type Todo = {
@@ -13,16 +13,29 @@ type Todo = {
 }
 const todoList = ref<Todo[]>([])
 
+const state = reactive({
+  loading: true
+})
+
 const auth = useAuth0();
 
+watchEffect(async() => {
+  if(auth) {
+    const response = await fetch(`http://localhost:4566/restapis/229iygurim/prod/_user_request_/todo?clientId=${auth.user.value.sub}`)
+    const data = await response.json()
+    todoList.value = data.todoList
+    state.loading = false
+  }
+})
+
 onMounted(async () => {
-  const response = await fetch('http://localhost:4566/restapis/229iygurim/prod/_user_request_/todo')
+  const response = await fetch(`http://localhost:4566/restapis/229iygurim/prod/_user_request_/todo?clientId=${auth.user.value.sub}`)
   const data = await response.json()
   todoList.value = data.todoList
 })
 
 const saveTodoList = async (todoList: Todo[]) => {
-  const response = await fetch('http://localhost:4566/restapis/229iygurim/prod/_user_request_/todo', {
+  const response = await fetch(`http://localhost:4566/restapis/229iygurim/prod/_user_request_/todo?clientId=${auth.user.value.sub}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -61,7 +74,10 @@ const deleteTodo = (index: number) => {
 </script>
 
 <template>
-  <main v-if="auth.user.value">
+  <div v-if="state.loading">
+    Loading...
+  </div>
+  <main v-else-if="auth.user.value">
     <h1>Create Todo</h1>
     <TodoCreator @create-todo="createTodo" />
     <ul class="todo-list" v-if="todoList.length > 0">
