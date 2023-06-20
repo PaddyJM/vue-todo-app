@@ -13,6 +13,7 @@
     "deploy:local": "docker compose up -d && cd api/ && npx cdklocal bootstrap && npx cdklocal deploy --require-approval=never && cd ../"
   },
   "dependencies": {
+    "@auth0/auth0-vue": "^2.2.0",
     "@aws-sdk/client-dynamodb": "^3.347.0",
     "vue": "^3.3.2",
     "vue-router": "^4.2.0"

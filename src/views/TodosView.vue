@@ -3,6 +3,7 @@ import TodoCreator from '@/components/TodoCreator.vue'
 import TodoItem from '@/components/TodoItem.vue'
 import { Icon } from '@iconify/vue/dist/iconify.js'
 import { onMounted, ref } from 'vue'
+import { useAuth0 } from '@auth0/auth0-vue';
 
 type Todo = {
   id: number
@@ -11,6 +12,8 @@ type Todo = {
   isEditing: boolean
 }
 const todoList = ref<Todo[]>([])
+
+const auth = useAuth0();
 
 onMounted(async () => {
   const response = await fetch('http://localhost:4566/restapis/229iygurim/prod/_user_request_/todo')
@@ -58,7 +61,7 @@ const deleteTodo = (index: number) => {
 </script>
 
 <template>
-  <main>
+  <main v-if="auth.user.value">
     <h1>Create Todo</h1>
     <TodoCreator @create-todo="createTodo" />
     <ul class="todo-list" v-if="todoList.length > 0">

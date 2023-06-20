@@ -1,7 +1,20 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { useAuth0 } from '@auth0/auth0-vue';
 
 defineProps<{ msg: string }>()
+
+const { isAuthenticated, isLoading, user, loginWithRedirect, logout } = useAuth0()
+
+const handleLogin = () => {
+  loginWithRedirect()
+  isAuthenticated.value = true
+}
+
+const handleLogout = () => {
+  logout()
+  isAuthenticated.value = false
+}
 </script>
 
 <template>
@@ -12,6 +25,10 @@ defineProps<{ msg: string }>()
         <h1>{{ msg }}</h1>
       </div>
       <ul class="nav-routes">
+        <div>
+          <button v-if="!isAuthenticated" @click="handleLogin">Log in</button>
+          <button v-else @click="handleLogout">Log out</button>
+        </div>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
       </ul>
