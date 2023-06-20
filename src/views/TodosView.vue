@@ -13,18 +13,16 @@ type Todo = {
 }
 const todoList = ref<Todo[]>([])
 
-const state = reactive({
-  loading: true
-})
+const loading = ref<boolean>(true)
 
 const auth = useAuth0();
 
 watchEffect(async() => {
-  if(auth) {
-    const response = await fetch(`http://localhost:4566/restapis/229iygurim/prod/_user_request_/todo?clientId=${auth.user.value.sub}`)
-    const data = await response.json()
+  loading.value = false
+  const response = await fetch(`http://localhost:4566/restapis/229iygurim/prod/_user_request_/todo?clientId=${auth.user.value.sub}`)
+  const data = await response.json()
+  if(data.todoList) {
     todoList.value = data.todoList
-    state.loading = false
   }
 })
 
@@ -47,6 +45,7 @@ const saveTodoList = async (todoList: Todo[]) => {
 }
 
 const createTodo = (todo: string) => {
+  if(!todoList.value) todoList.value = []
   todoList.value.push({
     id: todoList.value.length + 1,
     todo,
@@ -74,7 +73,7 @@ const deleteTodo = (index: number) => {
 </script>
 
 <template>
-  <div v-if="state.loading">
+  <div v-if="loading">
     Loading...
   </div>
   <main v-else-if="auth.user.value">
