@@ -2,7 +2,7 @@
 import TodoCreator from '@/components/TodoCreator.vue'
 import TodoItem from '@/components/TodoItem.vue'
 import { Icon } from '@iconify/vue/dist/iconify.js'
-import { onMounted, reactive, ref, watchEffect } from 'vue'
+import { onMounted, ref, watchEffect } from 'vue'
 import { useAuth0 } from '@auth0/auth0-vue';
 
 type Todo = {
@@ -19,7 +19,7 @@ const auth = useAuth0();
 
 watchEffect(async() => {
   loading.value = false
-  const response = await fetch(`http://localhost:4566/restapis/229iygurim/prod/_user_request_/todo?clientId=${auth.user.value.sub}`)
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/todo?clientId=${auth.user.value.sub}`)
   const data = await response.json()
   if(data.todoList) {
     todoList.value = data.todoList
@@ -27,13 +27,15 @@ watchEffect(async() => {
 })
 
 onMounted(async () => {
-  const response = await fetch(`http://localhost:4566/restapis/229iygurim/prod/_user_request_/todo?clientId=${auth.user.value.sub}`)
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/todo?clientId=${auth.user.value.sub}`)
   const data = await response.json()
-  todoList.value = data.todoList
+  if (data.todoList) {
+    todoList.value = data.todoList
+  }
 })
 
 const saveTodoList = async (todoList: Todo[]) => {
-  const response = await fetch(`http://localhost:4566/restapis/229iygurim/prod/_user_request_/todo?clientId=${auth.user.value.sub}`, {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/todo?clientId=${auth.user.value.sub}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
