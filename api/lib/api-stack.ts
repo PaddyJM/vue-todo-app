@@ -49,20 +49,6 @@ export class TodoApiStack extends Stack {
       // }
     })
 
-    api.addGatewayResponse('Default4xx', {
-      type: aws_apigateway.ResponseType.DEFAULT_4XX,
-      responseHeaders: {
-        'Access-Control-Allow-Origin': '*'
-      }
-    })
-
-    api.addGatewayResponse('Default5xx', {
-      type: aws_apigateway.ResponseType.DEFAULT_5XX,
-      responseHeaders: {
-        'Access-Control-Allow-Origin': '*'
-      }
-    })
-
     const lambdaIntegration = new aws_apigateway.LambdaIntegration(lambda, {proxy: true})
 
     const resource = api.root.addResource('todo')
