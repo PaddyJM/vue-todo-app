@@ -51,11 +51,13 @@ export class TodoApiStack extends Stack {
 
     const lambdaIntegration = new aws_apigateway.LambdaIntegration(lambda, {proxy: true})
 
-    const resource = api.root.addResource('todo')
+    const clientResource = api.root.addResource('client')
+    const clientResourceId = clientResource.addResource('{clientId}')
+    const todoResource = clientResourceId.addResource('todo')
 
-    resource.addMethod('PUT', lambdaIntegration)
+    todoResource.addMethod('PUT', lambdaIntegration)
 
-    resource.addMethod('GET', lambdaIntegration)
+    todoResource.addMethod('GET', lambdaIntegration)
 
     /**
      * It turns out that when deploying to localstack by setting the default CORS 
@@ -64,7 +66,7 @@ export class TodoApiStack extends Stack {
      * which is to manually add the OPTIONS method to the resource and handle 
      * that method inside the lambda in accordance with the CORS spec.
      */
-    resource.addMethod('OPTIONS', lambdaIntegration)
+    todoResource.addMethod('OPTIONS', lambdaIntegration)
 
     new aws_dynamodb.Table(this, 'TodoTable', {
       partitionKey: { name: 'id', type: aws_dynamodb.AttributeType.STRING },
@@ -72,7 +74,7 @@ export class TodoApiStack extends Stack {
     })
 
     new CfnOutput(this, 'Endpoint', {
-      value: `http://localhost:4566/restapis/${api.restApiId}/prod/_user_request_${resource.path}`
+      value: `http://localhost:4566/restapis/${api.restApiId}/prod/_user_request_${todoResource.path}`
     })
   }
 }

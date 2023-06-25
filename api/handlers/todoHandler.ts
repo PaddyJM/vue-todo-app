@@ -22,10 +22,10 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     }
   }
 
-  if (!event.queryStringParameters?.clientId) {
+  if (!event.pathParameters?.clientId) {
     throw new Error('No client id provided')
   }
-  const clientId = event.queryStringParameters.clientId
+  const clientId = event.pathParameters.clientId
 
   let response
   let statusCode

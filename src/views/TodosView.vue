@@ -19,7 +19,7 @@ const auth = useAuth0();
 
 watchEffect(async() => {
   loading.value = false
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/todo?clientId=${auth.user.value.sub}`)
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/client/${auth.user.value.sub}/todo`)
   const data = await response.json()
   if(data.todoList) {
     todoList.value = data.todoList
@@ -27,7 +27,7 @@ watchEffect(async() => {
 })
 
 onMounted(async () => {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/todo?clientId=${auth.user.value.sub}`)
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/client/${auth.user.value.sub}/todo`)
   const data = await response.json()
   if (data.todoList) {
     todoList.value = data.todoList
@@ -35,7 +35,7 @@ onMounted(async () => {
 })
 
 const saveTodoList = async (todoList: Todo[]) => {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/todo?clientId=${auth.user.value.sub}`, {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/client/${auth.user.value.sub}/todo`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
