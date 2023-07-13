@@ -6,11 +6,13 @@
     "dev": "vite",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
-    "build-only": "vite build",
+    "build:development": "vite build --mode development",
+    "build:production": "vite build --mode production",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
-    "deploy:local": "docker compose up -d && cd api/ && npx cdklocal bootstrap && npx cdklocal deploy --require-approval=never && cd ../"
+    "deploy:local": "docker compose up -d && cd api/ && npx cdklocal bootstrap && npx cdklocal deploy --require-approval=never && cd ../",
+    "deploy:remote": "cd api/ && npx cdk bootstrap && npx cdk deploy --require-approval=never && cd ../"
   },
   "dependencies": {
     "@auth0/auth0-vue": "^2.2.0",
@@ -22,7 +24,7 @@
     "@iconify/vue": "^4.1.1",
     "@rushstack/eslint-patch": "^1.2.0",
     "@tsconfig/node18": "^2.0.1",
-    "@types/node": "^18.16.8",
+    "@types/node": "^18.16.19",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/eslint-config-prettier": "^7.1.0",
     "@vue/eslint-config-typescript": "^11.0.3",
