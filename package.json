@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "postinstall": "cd api/ && npm install && cd ../",
-    "dev": "vite",
+    "dev": "vite --mode development",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
     "build:development": "vite build --mode development",
@@ -12,7 +12,7 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
-    "deploy:development": "docker compose up -d && cd api/ && npx cdklocal bootstrap && npx cdklocal deploy --require-approval=never && cd ../",
+    "deploy:development": "cd api/ && npx cdk bootstrap && DEPLOYMENT_ENV=dev npx cdk deploy --require-approval=never && cd ../",
     "deploy:production": "cd api/ && npx cdk bootstrap && npx cdk deploy --require-approval=never && cd ../"
   },
   "dependencies": {

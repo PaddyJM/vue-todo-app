@@ -10,16 +10,35 @@ import {
 import { RestApi } from 'aws-cdk-lib/aws-apigateway'
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs'
 import * as aws_s3 from 'aws-cdk-lib/aws-s3'
+import * as iam from 'aws-cdk-lib/aws-iam'
 import { Construct } from 'constructs'
 import * as path from 'path'
+
+const env = process.env.DEPLOYMENT_ENV || 'dev'
 
 export class TodoApiStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props)
 
-    const lambda = new NodejsFunction(this, 'todoHandler', {
-      entry: path.join(__dirname, '../handlers/todoHandler.ts')
+    const table = new aws_dynamodb.Table(this, `TodoTable-${env}`, {
+      partitionKey: { name: 'id', type: aws_dynamodb.AttributeType.STRING },
+      tableName: `TodoTable-${env}`,
+      removalPolicy: RemovalPolicy.DESTROY,
     })
+
+
+    const lambda = new NodejsFunction(this, `todoHandler-${env}`, {
+      entry: path.join(__dirname, '../handlers/todoHandler.ts'),
+      environment: {
+        TODO_TABLE_NAME: table.tableName
+      }
+    })
+
+    lambda.addToRolePolicy(new iam.PolicyStatement({
+        actions: ['dynamodb:*'],
+        resources: [table.tableArn]
+      })
+    );
 
     // const vpc = new aws_ec2.Vpc(this, 'myVpc', {
     //   cidr: '10.0.0.0/16',
@@ -43,8 +62,9 @@ export class TodoApiStack extends Stack {
     //   )
     // })
 
-    const api = new RestApi(this, 'TodoApi', {
+    const api = new RestApi(this, `TodoApi-${env}`, {
       cloudWatchRole: false,
+      
       // domainName: {
       //   domainName: 'todo-api',
       //   certificate
@@ -70,29 +90,19 @@ export class TodoApiStack extends Stack {
      */
     todoResource.addMethod('OPTIONS', lambdaIntegration)
 
-    new aws_dynamodb.Table(this, 'TodoTable', {
-      partitionKey: { name: 'id', type: aws_dynamodb.AttributeType.STRING },
-      tableName: 'TodoTable',
-      removalPolicy: RemovalPolicy.DESTROY,
-    })
-
-    const bucket = new aws_s3.Bucket(this, 'TodoBucket', {
+    const bucket = new aws_s3.Bucket(this, `TodoBucket-${env}`, {
       publicReadAccess: true,
       websiteIndexDocument: 'index.html',
       blockPublicAccess: aws_s3.BlockPublicAccess.BLOCK_ACLS,
       accessControl: aws_s3.BucketAccessControl.BUCKET_OWNER_FULL_CONTROL,
     })
 
-    new aws_s3_deployment.BucketDeployment(this, 'DeployTodoWebsite', {
+    new aws_s3_deployment.BucketDeployment(this, `DeployTodoWebsite-${env}`, {
       sources: [aws_s3_deployment.Source.asset(path.join(__dirname, '../../dist'))],
       destinationBucket: bucket
     })
 
-    new CfnOutput(this, 'Endpoint', {
-      value: `http://localhost:4566/restapis/${api.restApiId}/prod/_user_request_${todoResource.path}`
-    })
-
-    new CfnOutput(this, 'TodoWebsite', {
+    new CfnOutput(this, `TodoWebsiteUrl-${env}`, {
       value: bucket.bucketWebsiteUrl
     })
   }

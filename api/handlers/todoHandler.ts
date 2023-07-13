@@ -1,13 +1,13 @@
-import { client } from '@auth0/auth0-vue/dist/typings/plugin'
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb'
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
-import { v4 as uuid } from 'uuid'
 
 const dynamoDBClient = new DynamoDB({
-  endpoint: `http://${process.env.LOCALSTACK_HOSTNAME}:4566`,
   region: 'eu-west-2'
 })
+
+const tableName = process.env.TODO_TABLE_NAME || 'TodoTable-dev'
+
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -41,7 +41,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         todoList: data.todoList
       })
       const x = await dynamoDBClient.putItem({
-        TableName: 'TodoTable',
+        TableName: tableName,
         Item: record
       })
       response = {
@@ -51,7 +51,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       }
     } else if (event.httpMethod === 'GET') {
       const x = await dynamoDBClient.getItem({
-        TableName: 'TodoTable',
+        TableName: tableName,
         Key: {
           id: {
             S: clientId
