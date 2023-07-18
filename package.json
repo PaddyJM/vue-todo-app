@@ -12,8 +12,8 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
-    "deploy:development": "cd api/ && npx cdk bootstrap && DEPLOYMENT_ENV=dev npx cdk deploy --require-approval=never && cd ../",
-    "deploy:production": "cd api/ && npx cdk bootstrap && npx cdk deploy --require-approval=never && cd ../"
+    "deploy:development": "npm run build:development && cd api/ && npx cdk bootstrap && DEPLOYMENT_ENV=dev npx cdk deploy --require-approval=never && cd ../",
+    "deploy:production": "npm run build:production && cd api/ && npx cdk bootstrap && DEPLOYMENT_ENV=prod npx cdk deploy --require-approval=never && cd ../"
   },
   "dependencies": {
     "@auth0/auth0-vue": "^2.2.0",
