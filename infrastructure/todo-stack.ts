@@ -1,5 +1,4 @@
 import {
-  CfnOutput,
   RemovalPolicy,
   Stack,
   StackProps,
@@ -16,19 +15,27 @@ import * as path from 'path'
 
 const env = process.env.DEPLOYMENT_ENV || 'dev'
 
-export class TodoApiStack extends Stack {
+export class TodoStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props)
 
-    const table = new aws_dynamodb.Table(this, `TodoTable-${env}`, {
-      partitionKey: { name: 'id', type: aws_dynamodb.AttributeType.STRING },
-      tableName: `TodoTable-${env}`,
-      removalPolicy: RemovalPolicy.DESTROY,
-    })
+    /**
+     * Comment this out if creating a new table
+     */
+    const table = aws_dynamodb.Table.fromTableArn(this, `TodoTable-${env}`, `arn:aws:dynamodb:eu-west-2:011624951925:table/TodoTable-${env}`);
+
+    /**
+     * Uncomment this to create new table if necessary
+     */
+    // const table = new aws_dynamodb.Table(this, `TodoTable-${env}`, {
+    //   partitionKey: { name: 'id', type: aws_dynamodb.AttributeType.STRING },
+    //   tableName: `TodoTable-${env}`,
+    //   removalPolicy: RemovalPolicy.RETAIN,
+    // })
 
 
     const lambda = new NodejsFunction(this, `todoHandler-${env}`, {
-      entry: path.join(__dirname, '../handlers/todoHandler.ts'),
+      entry: path.join(__dirname, './handlers/todoHandler.ts'),
       environment: {
         TODO_TABLE_NAME: table.tableName
       }
@@ -53,10 +60,10 @@ export class TodoApiStack extends Stack {
     // })
 
     // const certificate = new aws_certificatemanager.Certificate(this, 'Certificate', {
-    //   domainName: 'todo-api',
+    //   domainName: 'todo',
     //   validation: aws_certificatemanager.CertificateValidation.fromDns(
     //     new aws_route53.PrivateHostedZone(this, 'HostedZone', {
-    //       zoneName: 'todo-api',
+    //       zoneName: 'todo',
     //       vpc
     //     })
     //   )
@@ -98,12 +105,8 @@ export class TodoApiStack extends Stack {
     })
 
     new aws_s3_deployment.BucketDeployment(this, `DeployTodoWebsite-${env}`, {
-      sources: [aws_s3_deployment.Source.asset(path.join(__dirname, '../../dist'))],
+      sources: [aws_s3_deployment.Source.asset(path.join(__dirname, '../dist'))],
       destinationBucket: bucket
-    })
-
-    new CfnOutput(this, `TodoWebsiteUrl-${env}`, {
-      value: bucket.bucketWebsiteUrl
     })
   }
 }

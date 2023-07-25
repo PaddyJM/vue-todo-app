@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { TodoApiStack } from '../lib/api-stack';
+import { TodoStack } from './todo-stack';
 
 const env = process.env.DEPLOYMENT_ENV || 'dev'
 
 const app = new cdk.App();
-new TodoApiStack(app, `TodoApiStack-${env}`, {
+new TodoStack(app, `TodoStack-${env}`, {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */
