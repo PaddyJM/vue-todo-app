@@ -4,12 +4,6 @@
   "bin": {
     "api": "bin/api.js"
   },
-  "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "test": "jest",
-    "cdk": "cdk"
-  },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.116",
     "@types/jest": "^27.5.0",
