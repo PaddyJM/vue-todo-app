@@ -29,4 +29,6 @@ coverage
 
 volume
 
-.env*
+# exclude env files, include examples 
+.env.*
+!.env.*.example
