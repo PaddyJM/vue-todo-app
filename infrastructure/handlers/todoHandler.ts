@@ -3,7 +3,8 @@ import { marshall, unmarshall } from '@aws-sdk/util-dynamodb'
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 
 const dynamoDBClient = new DynamoDB({
-  region: 'eu-west-2'
+  region: 'eu-west-2',
+  endpoint: `${process.env.DYNAMO_DB_ENDPOINT ?? null}`
 })
 
 const tableName = process.env.TODO_TABLE_NAME || 'TodoTable-dev'
@@ -28,9 +29,10 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
   const clientId = event.pathParameters.clientId
 
   let response
-  let statusCode
+  let statusCode = 500
   try {
     if(event.httpMethod === 'PUT') {
+      console.log('here');
       if (!event.body) {
         throw new Error('No body provided')
       }
@@ -44,6 +46,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         TableName: tableName,
         Item: record
       })
+      statusCode = 200
       response = {
         todoList: [
           x
@@ -59,11 +62,13 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         }
       })
       if(!x.Item) {
-        throw new Error('No item found')
+        statusCode = 404
+        response = "No item found"
+      } else {
+        statusCode = 200
+        response = unmarshall(x.Item)
       }
-      response = unmarshall(x.Item)
     }
-  statusCode = 200
   } catch (error) {
     console.log(error)
     response = error
@@ -71,9 +76,10 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
   }
   return {
     isBase64Encoded: false,
-    body: JSON.stringify(response),
+    body: JSON.stringify(response) ?? '',
     headers: {
       'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json'
     },
     statusCode,
   }

@@ -1,5 +1,5 @@
 import {
-  RemovalPolicy,
+  Duration,
   Stack,
   StackProps,
   aws_apigateway,
@@ -36,8 +36,10 @@ export class TodoStack extends Stack {
 
     const lambda = new NodejsFunction(this, `todoHandler-${env}`, {
       entry: path.join(__dirname, './handlers/todoHandler.ts'),
+      timeout: Duration.seconds(12),
       environment: {
-        TODO_TABLE_NAME: table.tableName
+        TODO_TABLE_NAME: table.tableName,
+        DYNAMO_DB_ENDPOINT: `${process.env.DYNAMO_DB_ENDPOINT ?? null}`
       }
     })
 
