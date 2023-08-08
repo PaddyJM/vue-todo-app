@@ -13,6 +13,7 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
+    "deploy:db:offline": "cd infrastructure/ && docker compose up -d && scripts/create-table.sh",
     "deploy:offline": "npm run build:offline && cd infrastructure/ && npx cdk bootstrap && DEPLOYMENT_ENV=offline DYNAMO_DB_ENDPOINT=http://dynamodb-local:8000 npx cdk synth && sam local start-api -t ./cdk.out/TodoStack-offline.template.json --docker-network todo && cd ../",
     "deploy:development": "npm run build:development && cd infrastructure/ && npx cdk bootstrap && DEPLOYMENT_ENV=dev npx cdk deploy --require-approval=never && cd ../",
     "deploy:production": "npm run build:production && cd infrastructure/ && npx cdk bootstrap && DEPLOYMENT_ENV=prod npx cdk deploy --require-approval=never && cd ../"
