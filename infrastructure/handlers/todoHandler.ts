@@ -32,7 +32,6 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
   let statusCode = 500
   try {
     if(event.httpMethod === 'PUT') {
-      console.log('here');
       if (!event.body) {
         throw new Error('No body provided')
       }
