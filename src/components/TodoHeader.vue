@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { useAuth0 } from '@auth0/auth0-vue';
+import { useAuth0 } from '@auth0/auth0-vue'
 
 defineProps<{ msg: string }>()
 
-const { isAuthenticated, isLoading, user, loginWithRedirect, logout } = useAuth0()
+const { isAuthenticated, loginWithRedirect, logout } = useAuth0()
 
 const handleLogin = () => {
   loginWithRedirect()

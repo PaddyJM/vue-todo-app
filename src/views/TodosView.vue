@@ -3,7 +3,7 @@ import TodoCreator from '@/components/TodoCreator.vue'
 import TodoItem from '@/components/TodoItem.vue'
 import { Icon } from '@iconify/vue/dist/iconify.js'
 import { onMounted, ref, watchEffect } from 'vue'
-import { useAuth0 } from '@auth0/auth0-vue';
+import { useAuth0 } from '@auth0/auth0-vue'
 
 type Todo = {
   id: number
@@ -15,19 +15,23 @@ const todoList = ref<Todo[]>([])
 
 const loading = ref<boolean>(true)
 
-const auth = useAuth0();
+const auth = useAuth0()
 
-watchEffect(async() => {
+watchEffect(async () => {
   loading.value = false
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/client/${auth.user.value.sub}/todo`)
+  const response = await fetch(
+    `${import.meta.env.VITE_API_BASE_URL}/client/${auth.user.value.sub}/todo`
+  )
   const data = await response.json()
-  if(data.todoList) {
+  if (data.todoList) {
     todoList.value = data.todoList
   }
 })
 
 onMounted(async () => {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/client/${auth.user.value.sub}/todo`)
+  const response = await fetch(
+    `${import.meta.env.VITE_API_BASE_URL}/client/${auth.user.value.sub}/todo`
+  )
   const data = await response.json()
   if (data.todoList) {
     todoList.value = data.todoList
@@ -35,19 +39,22 @@ onMounted(async () => {
 })
 
 const saveTodoList = async (todoList: Todo[]) => {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/client/${auth.user.value.sub}/todo`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({ todoList })
-  })
+  const response = await fetch(
+    `${import.meta.env.VITE_API_BASE_URL}/client/${auth.user.value.sub}/todo`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: JSON.stringify({ todoList })
+    }
+  )
   console.log(response)
 }
 
 const createTodo = (todo: string) => {
-  if(!todoList.value) todoList.value = []
+  if (!todoList.value) todoList.value = []
   todoList.value.push({
     id: todoList.value.length + 1,
     todo,
@@ -75,9 +82,7 @@ const deleteTodo = (index: number) => {
 </script>
 
 <template>
-  <div v-if="loading">
-    Loading...
-  </div>
+  <div v-if="loading">Loading...</div>
   <main v-else-if="auth.user.value">
     <h1>Create Todo</h1>
     <TodoCreator @create-todo="createTodo" />
