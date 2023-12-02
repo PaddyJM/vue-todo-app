@@ -41,18 +41,18 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         id: clientId,
         todoList: data.todoList
       })
-      const x = await dynamoDBClient.putItem({
+      const dynamodbPutItem = await dynamoDBClient.putItem({
         TableName: tableName,
         Item: record
       })
       statusCode = 200
       response = {
         todoList: [
-          x
+          dynamodbPutItem
         ]
       }
     } else if (event.httpMethod === 'GET') {
-      const x = await dynamoDBClient.getItem({
+      const dynamoDBGetItem = await dynamoDBClient.getItem({
         TableName: tableName,
         Key: {
           id: {
@@ -60,12 +60,12 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
           }
         }
       })
-      if(!x.Item) {
+      if(!dynamoDBGetItem.Item) {
         statusCode = 404
         response = "No item found"
       } else {
         statusCode = 200
-        response = unmarshall(x.Item)
+        response = unmarshall(dynamoDBGetItem.Item)
       }
     }
   } catch (error) {
