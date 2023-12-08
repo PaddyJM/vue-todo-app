@@ -32,4 +32,7 @@ Run
 ```
 deploy:{env}
 ```
-Note: for offline development you will need to spin up the front end using `npm run dev` as it is deployed seperately.
+Notes: 
+
+1. For offline development you will need to spin up the front end using `npm run dev` as it is deployed seperately.
+2. Offline development still requires an internet connection to use auth services
