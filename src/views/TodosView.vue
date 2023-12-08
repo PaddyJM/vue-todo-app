@@ -35,7 +35,7 @@ onMounted(async () => {
 
 const saveTodoList = async (todoList: Todo[]) => {
   if (auth.isAuthenticated) {
-      const response = await fetch(
+    const response = await fetch(
       `${import.meta.env.VITE_API_BASE_URL}/client/${auth.user.value.sub}/todo`,
       {
         method: 'PUT',
@@ -87,16 +87,9 @@ const deleteTodo = (index: number) => {
     <h1>Create Todo</h1>
     <TodoCreator @create-todo="createTodo" />
     <ul class="todo-list" v-if="todoList.length > 0">
-      <TodoItem
-        v-for="(todo, index) in todoList"
-        :key="todo.id"
-        :todo="todo"
-        :index="index"
-        @toggle-complete="toggleTodoComplete"
-        @toggle-edit="toggleTodoEdit"
-        @update-todo="updateTodo"
-        @delete-todo="deleteTodo"
-      />
+      <TodoItem v-for="(todo, index) in todoList" :key="todo.id" :todo="todo" :index="index"
+        @toggle-complete="toggleTodoComplete" @toggle-edit="toggleTodoEdit" @update-todo="updateTodo"
+        @delete-todo="deleteTodo" />
     </ul>
     <p class="todos-msg" v-else>
       <Icon icon="emojione:sad-but-relieved-face" class="icon" />
