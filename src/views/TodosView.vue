@@ -4,13 +4,8 @@ import TodoItem from '@/components/TodoItem.vue'
 import { Icon } from '@iconify/vue/dist/iconify.js'
 import { onMounted, ref, watchEffect } from 'vue'
 import { useAuth0 } from '@auth0/auth0-vue'
+import type { Todo } from '@/types'
 
-type Todo = {
-  id: number
-  todo: string
-  completed: boolean
-  isEditing: boolean
-}
 const todoList = ref<Todo[]>([])
 
 const loading = ref<boolean>(true)
