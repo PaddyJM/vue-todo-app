@@ -5,8 +5,11 @@ import { Icon } from '@iconify/vue/dist/iconify.js'
 import { onMounted, ref, watchEffect } from 'vue'
 import { useAuth0 } from '@auth0/auth0-vue'
 import type { Todo } from '@/types'
+import { useTodoStore } from '@/stores/todoStore'
 
 const todoList = ref<Todo[]>([])
+
+const todoStore = useTodoStore()
 
 const loading = ref<boolean>(true)
 
@@ -24,13 +27,8 @@ watchEffect(async () => {
 })
 
 onMounted(async () => {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/client/${auth.user.value.sub}/todo`
-  )
-  const data = await response.json()
-  if (data.todoList) {
-    todoList.value = data.todoList
-  }
+  todoStore.loadTodos()
+  todoList.value = todoStore.todos
 })
 
 const saveTodoList = async (todoList: Todo[]) => {
