@@ -34,18 +34,23 @@ onMounted(async () => {
 })
 
 const saveTodoList = async (todoList: Todo[]) => {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/client/${auth.user.value.sub}/todo`,
-    {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      },
-      body: JSON.stringify({ todoList })
-    }
-  )
-  console.log(response)
+  if (auth.isAuthenticated) {
+      const response = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/client/${auth.user.value.sub}/todo`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify({ todoList })
+      }
+    )
+    console.log(response)
+  } else {
+    console.log('not authenticated')
+    auth.loginWithRedirect()
+  }
 }
 
 const createTodo = (todo: string) => {
