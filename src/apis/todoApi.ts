@@ -17,7 +17,7 @@ export default class TodoApi {
     return response.json()
   }
 
-  async loadTodos(userId: string): Promise<Todo[]> {
+  async loadTodos(userId: string): Promise<{ id: string; todoList: Todo[] }> {
     const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/client/${userId}/todo`)
     if (!response.ok) {
       throw new Error('Error loading todos')

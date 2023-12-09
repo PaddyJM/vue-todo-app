@@ -12,7 +12,7 @@ export const useTodoStore = defineStore({
     todos: [] as Todo[]
   }),
   actions: {
-    addTodo(todo: Todo) {
+    saveTodo(todo: Todo) {
       if (!auth.user.value.sub) {
         throw new Error('User not logged in')
       }
@@ -20,12 +20,9 @@ export const useTodoStore = defineStore({
       todoApi.saveTodos(this.todos, auth.user.value.sub)
     },
 
-    async loadTodos() {
-      if (!auth.user.value.sub) {
-        throw new Error('User not logged in')
-      }
-      const todos = await todoApi.loadTodos(auth.user.value.sub)
-      this.todos = todos
+    async loadTodos(userId: string) {
+      const response = await todoApi.loadTodos(userId)
+      this.todos = response.todoList
     }
   }
 })
