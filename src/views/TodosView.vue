@@ -53,6 +53,7 @@ const toggleTodoComplete = (index: number) => {
 
 const toggleTodoEdit = (index: number) => {
   todos.value[index].isEditing = !todos.value[index].isEditing
+  saveTodo()
 }
 
 const updateTodo = (todo: string, index: number) => {
