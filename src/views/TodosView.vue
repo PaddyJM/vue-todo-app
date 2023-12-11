@@ -6,13 +6,14 @@ import { ref, watchEffect } from 'vue'
 import { useAuth0 } from '@auth0/auth0-vue'
 import type { Todo } from '@/types'
 import { useTodoStore } from '@/stores/todoStore'
+import { storeToRefs } from 'pinia'
 
 const loading = ref(true)
 
 const todoStore = useTodoStore()
 const auth = useAuth0()
 
-const todos = ref<Todo[]>([])
+const { todos } = storeToRefs(todoStore)
 
 watchEffect(async () => {
   if (!auth.user.value.sub) {
