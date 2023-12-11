@@ -3,7 +3,7 @@ then
   echo "Table already exists"
 else
   echo "Creating table"
-  aws dynamodb create-table \
+  AWS_PAGER="" aws dynamodb create-table \
     --table-name TodoTable-offline \
     --attribute-definitions \
       AttributeName=id,AttributeType=S \
