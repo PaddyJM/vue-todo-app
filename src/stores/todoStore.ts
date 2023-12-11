@@ -10,8 +10,7 @@ export const useTodoStore = defineStore({
     todos: [] as Todo[]
   }),
   actions: {
-    saveTodo(user: string, todo?: Todo) {
-      if (todo) this.todos.push(todo)
+    saveTodo(user: string) {
       todoApi.saveTodos(this.todos, user)
     },
 

@@ -26,9 +26,9 @@ watchEffect(async () => {
   loading.value = false
 })
 
-const saveTodo = async (todo?: Todo) => {
+const saveTodo = async () => {
   if (auth.isAuthenticated && auth.user.value.sub ) {
-    todoStore.saveTodo(auth.user.value.sub, todo)
+    todoStore.saveTodo(auth.user.value.sub)
   } else {
     console.log('not authenticated')
     auth.loginWithRedirect()
@@ -42,7 +42,8 @@ const createTodo = (message: string) => {
     completed: false,
     isEditing: false
   }
-  saveTodo(todo)
+  todos.value.push(todo)
+  saveTodo()
 }
 
 const toggleTodoComplete = (index: number) => {
