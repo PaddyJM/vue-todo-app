@@ -27,7 +27,7 @@ watchEffect(async () => {
 })
 
 const saveTodo = async () => {
-  if (auth.isAuthenticated && auth.user.value.sub ) {
+  if (auth.isAuthenticated && auth.user.value.sub) {
     todoStore.saveTodo(auth.user.value.sub)
   } else {
     console.log('not authenticated')
