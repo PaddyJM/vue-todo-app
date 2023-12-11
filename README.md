@@ -8,6 +8,8 @@
 npm i
 ```
 
+For offline developmenty you will also need to have the [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html#getting-started-install-instructions) installed and the [aws sam cli](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html#install-sam-cli-instructions).
+
 2. Copy example env files and remove `.example` suffix
 
 e.g.
