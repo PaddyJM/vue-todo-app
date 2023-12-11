@@ -1,6 +1,5 @@
 import TodoApi from '@/apis/todoApi'
 import type { Todo } from '@/types'
-import { useAuth0 } from '@auth0/auth0-vue'
 import { defineStore } from 'pinia'
 
 const todoApi = new TodoApi()
