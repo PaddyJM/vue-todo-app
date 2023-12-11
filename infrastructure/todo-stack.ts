@@ -4,7 +4,7 @@ import {
   StackProps,
   aws_apigateway,
   aws_dynamodb,
-  aws_s3_deployment,
+  aws_s3_deployment
 } from 'aws-cdk-lib'
 import { RestApi } from 'aws-cdk-lib/aws-apigateway'
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs'
@@ -22,7 +22,11 @@ export class TodoStack extends Stack {
     /**
      * Comment this out if creating a new table
      */
-    const table = aws_dynamodb.Table.fromTableArn(this, `TodoTable-${env}`, `arn:aws:dynamodb:eu-west-2:011624951925:table/TodoTable-${env}`);
+    const table = aws_dynamodb.Table.fromTableArn(
+      this,
+      `TodoTable-${env}`,
+      `arn:aws:dynamodb:eu-west-2:011624951925:table/TodoTable-${env}`
+    )
 
     /**
      * Uncomment this to create new table if necessary
@@ -33,7 +37,6 @@ export class TodoStack extends Stack {
     //   removalPolicy: RemovalPolicy.RETAIN,
     // })
 
-
     const lambda = new NodejsFunction(this, `todoHandler-${env}`, {
       entry: path.join(__dirname, './handlers/todoHandler.ts'),
       timeout: Duration.seconds(12),
@@ -43,11 +46,12 @@ export class TodoStack extends Stack {
       }
     })
 
-    lambda.addToRolePolicy(new iam.PolicyStatement({
+    lambda.addToRolePolicy(
+      new iam.PolicyStatement({
         actions: ['dynamodb:*'],
         resources: [table.tableArn]
       })
-    );
+    )
 
     // const vpc = new aws_ec2.Vpc(this, 'myVpc', {
     //   cidr: '10.0.0.0/16',
@@ -72,15 +76,15 @@ export class TodoStack extends Stack {
     // })
 
     const api = new RestApi(this, `TodoApi-${env}`, {
-      cloudWatchRole: false,
-      
+      cloudWatchRole: false
+
       // domainName: {
       //   domainName: 'todo-api',
       //   certificate
       // }
     })
 
-    const lambdaIntegration = new aws_apigateway.LambdaIntegration(lambda, {proxy: true})
+    const lambdaIntegration = new aws_apigateway.LambdaIntegration(lambda, { proxy: true })
 
     const clientResource = api.root.addResource('client')
     const clientResourceId = clientResource.addResource('{clientId}')
@@ -91,10 +95,10 @@ export class TodoStack extends Stack {
     todoResource.addMethod('GET', lambdaIntegration)
 
     /**
-     * It turns out that when deploying to localstack by setting the default CORS 
-     * options on the Rest API (above), the OPTIONS method is not implemented 
-     * on the correctly corresponding API Gateway resource. This is a workaround, 
-     * which is to manually add the OPTIONS method to the resource and handle 
+     * It turns out that when deploying to localstack by setting the default CORS
+     * options on the Rest API (above), the OPTIONS method is not implemented
+     * on the correctly corresponding API Gateway resource. This is a workaround,
+     * which is to manually add the OPTIONS method to the resource and handle
      * that method inside the lambda in accordance with the CORS spec.
      */
     todoResource.addMethod('OPTIONS', lambdaIntegration)
@@ -103,7 +107,7 @@ export class TodoStack extends Stack {
       publicReadAccess: true,
       websiteIndexDocument: 'index.html',
       blockPublicAccess: aws_s3.BlockPublicAccess.BLOCK_ACLS,
-      accessControl: aws_s3.BucketAccessControl.BUCKET_OWNER_FULL_CONTROL,
+      accessControl: aws_s3.BucketAccessControl.BUCKET_OWNER_FULL_CONTROL
     })
 
     new aws_s3_deployment.BucketDeployment(this, `DeployTodoWebsite-${env}`, {
