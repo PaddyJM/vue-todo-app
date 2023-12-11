@@ -61,6 +61,7 @@ const updateTodo = (todo: string, index: number) => {
 
 const deleteTodo = (index: number) => {
   todos.value.splice(index, 1)
+  saveTodo()
 }
 </script>
 
