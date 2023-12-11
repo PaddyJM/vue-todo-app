@@ -17,7 +17,6 @@ const createTodo = () => {
     return
   }
   emit('createTodo', todoState.todo)
-  console.log(todoState.todo)
   todoState.todo = ''
   todoState.invalid = false
 }
