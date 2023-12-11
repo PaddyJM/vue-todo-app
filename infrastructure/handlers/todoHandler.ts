@@ -39,7 +39,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       const data = JSON.parse(event.body)
       const record = marshall({
         id: clientId,
-        todoList: data.todoList
+        todos: data.todos
       })
       const dynamodbPutItem = await dynamoDBClient.putItem({
         TableName: tableName,
@@ -47,7 +47,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       })
       statusCode = 200
       response = {
-        todoList: [
+        todos: [
           dynamodbPutItem
         ]
       }

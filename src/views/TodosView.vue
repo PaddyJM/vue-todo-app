@@ -12,7 +12,7 @@ const loading = ref(true)
 const todoStore = useTodoStore()
 const auth = useAuth0()
 
-const todoList = ref<Todo[]>([])
+const todos = ref<Todo[]>([])
 
 watchEffect(async () => {
   if (!auth.user.value.sub) {
@@ -21,13 +21,13 @@ watchEffect(async () => {
     return
   }
   await todoStore.loadTodos(auth.user.value.sub)
-  todoList.value = todoStore.todos
+  todos.value = todoStore.todos
   loading.value = false
 })
 
 const saveTodo = async (todo: Todo) => {
-  if (auth.isAuthenticated) {
-    todoStore.saveTodo(todo)
+  if (auth.isAuthenticated && auth.user.value.sub ) {
+    todoStore.saveTodo(todo, auth.user.value.sub)
   } else {
     console.log('not authenticated')
     auth.loginWithRedirect()
@@ -45,19 +45,19 @@ const createTodo = (message: string) => {
 }
 
 const toggleTodoComplete = (index: number) => {
-  todoList.value[index].completed = !todoList.value[index].completed
+  todos.value[index].completed = !todos.value[index].completed
 }
 
 const toggleTodoEdit = (index: number) => {
-  todoList.value[index].isEditing = !todoList.value[index].isEditing
+  todos.value[index].isEditing = !todos.value[index].isEditing
 }
 
 const updateTodo = (todo: string, index: number) => {
-  todoList.value[index].todo = todo
+  todos.value[index].todo = todo
 }
 
 const deleteTodo = (index: number) => {
-  todoList.value.splice(index, 1)
+  todos.value.splice(index, 1)
 }
 </script>
 
@@ -66,8 +66,8 @@ const deleteTodo = (index: number) => {
   <main v-else-if="auth.user.value">
     <h1>Create Todo</h1>
     <TodoCreator @create-todo="createTodo" />
-    <ul class="todo-list" v-if="todoList.length > 0">
-      <TodoItem v-for="(todo, index) in todoList" :key="todo.id" :todo="todo" :index="index"
+    <ul class="todo-list" v-if="todos.length > 0">
+      <TodoItem v-for="(todo, index) in todos" :key="todo.id" :todo="todo" :index="index"
         @toggle-complete="toggleTodoComplete" @toggle-edit="toggleTodoEdit" @update-todo="updateTodo"
         @delete-todo="deleteTodo" />
     </ul>
