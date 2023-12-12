@@ -2,7 +2,7 @@
 import TodoCreator from '@/components/TodoCreator.vue'
 import TodoItem from '@/components/TodoItem.vue'
 import { Icon } from '@iconify/vue/dist/iconify.js'
-import { ref, watchEffect } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useAuth0 } from '@auth0/auth0-vue'
 import type { Todo } from '@/types'
 import { useTodoStore } from '@/stores/todoStore'
@@ -15,7 +15,10 @@ const auth = useAuth0()
 
 const { todos } = storeToRefs(todoStore)
 
-watchEffect(async () => {
+onMounted(async () => {
+  do {
+    await new Promise((resolve) => setTimeout(resolve, 100))
+  } while (auth.isLoading.value)
   if (!auth.user.value.sub) {
     console.log('no user')
     loading.value = false
@@ -71,7 +74,7 @@ const deleteTodo = (index: number) => {
   <main v-else-if="auth.user.value">
     <h1>Create Todo</h1>
     <TodoCreator @create-todo="createTodo" />
-    <ul class="todo-list" v-if="todos.length > 0">
+    <ul class="todo-list" v-if="todos && todos.length > 0">
       <TodoItem v-for="(todo, index) in todos" :key="todo.id" :todo="todo" :index="index"
         @toggle-complete="toggleTodoComplete" @toggle-edit="toggleTodoEdit" @update-todo="updateTodo"
         @delete-todo="deleteTodo" />
