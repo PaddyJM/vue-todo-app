@@ -37,14 +37,25 @@ export class TodoStack extends Stack {
     //   removalPolicy: RemovalPolicy.RETAIN,
     // })
 
-    const lambda = new NodejsFunction(this, `todoHandler-${env}`, {
-      entry: path.join(__dirname, './handlers/todoHandler.ts'),
-      timeout: Duration.seconds(12),
-      environment: {
-        TODO_TABLE_NAME: table.tableName,
-        DYNAMO_DB_ENDPOINT: `${process.env.DYNAMO_DB_ENDPOINT ?? null}`
-      }
-    })
+    let lambda
+    if (env === 'offline') {
+      lambda = new NodejsFunction(this, `todoHandler-${env}`, {
+        entry: path.join(__dirname, './handlers/todoHandler.ts'),
+        timeout: Duration.seconds(12),
+        environment: {
+          TODO_TABLE_NAME: table.tableName,
+          DYNAMO_DB_ENDPOINT: `${process.env.DYNAMO_DB_ENDPOINT}`
+        }
+      })
+    } else {
+      lambda = new NodejsFunction(this, `todoHandler-${env}`, {
+        entry: path.join(__dirname, './handlers/todoHandler.ts'),
+        timeout: Duration.seconds(12),
+        environment: {
+          TODO_TABLE_NAME: table.tableName
+        }
+      })
+    }
 
     lambda.addToRolePolicy(
       new iam.PolicyStatement({

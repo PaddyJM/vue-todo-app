@@ -2,10 +2,17 @@ import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb'
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 
-const dynamoDBClient = new DynamoDB({
-  region: 'eu-west-2',
-  endpoint: `${process.env.DYNAMO_DB_ENDPOINT ?? null}`
-})
+let dynamoDBClient: DynamoDB
+if (process.env.DYNAMO_DB_ENDPOINT) {
+  dynamoDBClient = new DynamoDB({
+    region: 'localhost',
+    endpoint: `${process.env.DYNAMO_DB_ENDPOINT}`
+  })
+} else {
+  dynamoDBClient = new DynamoDB({
+    region: 'eu-west-2'
+  })
+}
 
 const tableName = process.env.TODO_TABLE_NAME || 'TodoTable-dev'
 
@@ -31,7 +38,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
   let response
   let statusCode = 500
   try {
-    if(event.httpMethod === 'PUT') {
+    if (event.httpMethod === 'PUT') {
       if (!event.body) {
         throw new Error('No body provided')
       }
@@ -39,7 +46,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       const data = JSON.parse(event.body)
       const record = marshall({
         id: clientId,
-        todos: data.todos
+        todoList: data.todos
       })
       const dynamodbPutItem = await dynamoDBClient.putItem({
         TableName: tableName,
@@ -47,9 +54,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       })
       statusCode = 200
       response = {
-        todos: [
-          dynamodbPutItem
-        ]
+        todos: [dynamodbPutItem]
       }
     } else if (event.httpMethod === 'GET') {
       const dynamoDBGetItem = await dynamoDBClient.getItem({
@@ -60,9 +65,9 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
           }
         }
       })
-      if(!dynamoDBGetItem.Item) {
+      if (!dynamoDBGetItem.Item) {
         statusCode = 404
-        response = "No item found"
+        response = 'No item found'
       } else {
         statusCode = 200
         response = unmarshall(dynamoDBGetItem.Item)
@@ -80,6 +85,6 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json'
     },
-    statusCode,
+    statusCode
   }
 }
