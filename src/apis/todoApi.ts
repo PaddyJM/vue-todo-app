@@ -1,3 +1,4 @@
+import { useSnackbarStore } from '@/stores/snackbarStore'
 import type { Todo } from '@/types'
 
 type TodoResponse = {
@@ -16,7 +17,8 @@ export default class TodoApi {
       body: JSON.stringify({ todos })
     })
     if (!response.ok) {
-      throw new Error('Error saving todos')
+      useSnackbarStore().addItem('Error saving todos', 'error')
+      throw new Error(JSON.stringify({ message: 'Error saving todos', response }))
     }
 
     return response.json()
@@ -25,7 +27,8 @@ export default class TodoApi {
   async loadTodos(userId: string): Promise<TodoResponse> {
     const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/client/${userId}/todo`)
     if (!response.ok && response.status !== 404) {
-      throw new Error('Error loading todos')
+      useSnackbarStore().addItem('Error saving todos', 'error')
+      throw new Error(JSON.stringify({ message: 'Error loading todos', response }))
     }
 
     return response.json()

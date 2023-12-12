@@ -20,7 +20,7 @@ onMounted(async () => {
     await new Promise((resolve) => setTimeout(resolve, 100))
   } while (auth.isLoading.value)
   if (!auth.user.value.sub) {
-    console.log('no user')
+    console.log('no user id')
     loading.value = false
     return
   }
