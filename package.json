@@ -7,7 +7,7 @@
     "dev": "vite --mode offline",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
-    "build:development": "vite build --mode development",
+    "build:development": "NODE_ENV=development vite build --mode development",
     "build:production": "vite build --mode production",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "lint": "eslint src --ext .ts,.vue --fix",
