@@ -15,7 +15,7 @@ export const useTodoStore = defineStore({
 
     async loadTodos(userId: string) {
       const response = await todoApi.loadTodos(userId)
-      this.todos = response.todos
+      if (response.todoList) this.todos = response.todoList
     }
   }
 })
