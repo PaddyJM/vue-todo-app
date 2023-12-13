@@ -29,8 +29,6 @@ const handleLogout = () => {
           <button v-if="!isAuthenticated" @click="handleLogin">Log in</button>
           <button v-else @click="handleLogout">Log out</button>
         </div>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
       </ul>
     </nav>
   </header>
