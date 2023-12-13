@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
 
 type SnackbarTypes = 'success' | 'error' | 'warning' | 'info'
 
@@ -8,7 +8,7 @@ export const useSnackbarStore = defineStore('SnackbarStore', () => {
     items: [] as { id: number; message: string; type: SnackbarTypes; timeout: number }[]
   })
   const addItem = (message: string, type: SnackbarTypes) => {
-    const nextId = state.items.length + 1
+    const nextId = state.items.length
     state.items[nextId] = {
       id: nextId,
       message,
@@ -16,5 +16,12 @@ export const useSnackbarStore = defineStore('SnackbarStore', () => {
       timeout: 5000
     }
   }
-  return { state, addItem }
+  const nextItem = computed(() => {
+    return state.items[0]
+  })
+
+  const removeNextItem = () => {
+    state.items.shift()
+  }
+  return { state, addItem, nextItem, removeNextItem }
 })

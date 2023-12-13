@@ -27,7 +27,7 @@ export default class TodoApi {
   async loadTodos(userId: string): Promise<TodoResponse> {
     const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/client/${userId}/todo`)
     if (!response.ok && response.status !== 404) {
-      useSnackbarStore().addItem('Error saving todos', 'error')
+      useSnackbarStore().addItem('Error loading todos', 'error')
       throw new Error(JSON.stringify({ message: 'Error loading todos', response }))
     }
 

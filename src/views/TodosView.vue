@@ -7,13 +7,19 @@ import { useAuth0 } from '@auth0/auth0-vue'
 import type { Todo } from '@/types'
 import { useTodoStore } from '@/stores/todoStore'
 import { storeToRefs } from 'pinia'
+import { useSnackbarStore } from '@/stores/snackbarStore'
+import { VSnackbar } from 'vuetify/components'
+import { watch } from 'vue'
 
 const loading = ref(true)
+const isVisible = ref(false)
 
 const todoStore = useTodoStore()
+const snackbarStore = useSnackbarStore()
 const auth = useAuth0()
 
 const { todos } = storeToRefs(todoStore)
+const { nextItem } = storeToRefs(snackbarStore)
 
 onMounted(async () => {
   do {
@@ -27,6 +33,17 @@ onMounted(async () => {
   await todoStore.loadTodos(auth.user.value.sub)
   todos.value = todoStore.todos
   loading.value = false
+})
+
+watch(nextItem, (nextItem) => {
+  if (nextItem) {
+    isVisible.value = true
+    setTimeout(() => {
+      snackbarStore.removeNextItem()
+    }, nextItem.timeout)
+  } else {
+    isVisible.value = false
+  }
 })
 
 const saveTodo = async () => {
@@ -70,14 +87,24 @@ const deleteTodo = (index: number) => {
 </script>
 
 <template>
+  <VSnackbar v-if="nextItem" v-model="isVisible" :color="nextItem.type" timeout="-1">
+    <h1>{{ nextItem.message }}</h1>
+  </VSnackbar>
   <div v-if="loading">Loading...</div>
   <main v-else-if="auth.user.value">
     <h1>Create Todo</h1>
     <TodoCreator @create-todo="createTodo" />
     <ul class="todo-list" v-if="todos && todos.length > 0">
-      <TodoItem v-for="(todo, index) in todos" :key="todo.id" :todo="todo" :index="index"
-        @toggle-complete="toggleTodoComplete" @toggle-edit="toggleTodoEdit" @update-todo="updateTodo"
-        @delete-todo="deleteTodo" />
+      <TodoItem
+        v-for="(todo, index) in todos"
+        :key="todo.id"
+        :todo="todo"
+        :index="index"
+        @toggle-complete="toggleTodoComplete"
+        @toggle-edit="toggleTodoEdit"
+        @update-todo="updateTodo"
+        @delete-todo="deleteTodo"
+      />
     </ul>
     <p class="todos-msg" v-else>
       <Icon icon="emojione:sad-but-relieved-face" class="icon" />
