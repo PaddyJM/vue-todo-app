@@ -118,7 +118,7 @@ const deleteTodo = (index: number) => {
     <div>
       <h1>Options</h1>
       <div>
-        <VBtn @click="hideCompleted = !hideCompleted" :color="hideCompleted ? 'white' : 'green'">Hide Completed</VBtn>
+        <VBtn @click="hideCompleted = !hideCompleted" :color="hideCompleted ? 'green' : 'white'">Hide Completed</VBtn>
       </div>
     </div>
     <ul class="todo-list" v-if="filteredTodos && filteredTodos.length > 0">
