@@ -10,6 +10,7 @@ import { storeToRefs } from 'pinia'
 import { useSnackbarStore } from '@/stores/snackbarStore'
 import { VSnackbar } from 'vuetify/components'
 import { watch } from 'vue'
+import { computed } from 'vue'
 
 const loading = ref(true)
 const authFailed = ref(false)
@@ -22,6 +23,8 @@ const auth = useAuth0()
 const { todos } = storeToRefs(todoStore)
 const { nextItem } = storeToRefs(snackbarStore)
 
+const userId = computed(() => auth.user.value.sub)
+
 onMounted(async () => {
   do {
     await new Promise((resolve) => setTimeout(resolve, 100))
@@ -32,12 +35,12 @@ onMounted(async () => {
     authFailed.value = true
     return
   }
-  if (!auth.user.value.sub) {
+  if (!userId.value) {
     console.log('no user id')
     auth.loginWithRedirect()
     return
   }
-  await todoStore.loadTodos(auth.user.value.sub)
+  await todoStore.loadTodos(userId.value)
   todos.value = todoStore.todos
   loading.value = false
 })
@@ -54,8 +57,8 @@ watch(nextItem, (nextItem) => {
 })
 
 const saveTodo = async () => {
-  if (auth.isAuthenticated && auth.user.value.sub) {
-    todoStore.saveTodo(auth.user.value.sub)
+  if (auth.isAuthenticated && userId.value) {
+    todoStore.saveTodo(userId.value)
   } else {
     console.log('not authenticated')
     auth.loginWithRedirect()
