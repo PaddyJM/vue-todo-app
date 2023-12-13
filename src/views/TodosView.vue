@@ -12,6 +12,7 @@ import { VSnackbar } from 'vuetify/components'
 import { watch } from 'vue'
 
 const loading = ref(true)
+const authFailed = ref(false)
 const isVisible = ref(false)
 
 const todoStore = useTodoStore()
@@ -25,9 +26,15 @@ onMounted(async () => {
   do {
     await new Promise((resolve) => setTimeout(resolve, 100))
   } while (auth.isLoading.value)
+  if (!auth.isAuthenticated.value) {
+    console.log('not authenticated')
+    loading.value = false
+    authFailed.value = true
+    return
+  }
   if (!auth.user.value.sub) {
     console.log('no user id')
-    loading.value = false
+    auth.loginWithRedirect()
     return
   }
   await todoStore.loadTodos(auth.user.value.sub)
@@ -90,7 +97,11 @@ const deleteTodo = (index: number) => {
   <VSnackbar v-if="nextItem" v-model="isVisible" :color="nextItem.type" timeout="-1">
     <h1>{{ nextItem.message }}</h1>
   </VSnackbar>
+
   <div v-if="loading">Loading...</div>
+
+  <div v-else-if="authFailed">Authentication failed. Please log in.</div>
+
   <main v-else-if="auth.user.value">
     <h1>Create Todo</h1>
     <TodoCreator @create-todo="createTodo" />
