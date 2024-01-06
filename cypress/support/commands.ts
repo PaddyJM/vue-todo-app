@@ -35,3 +35,48 @@
 //     }
 //   }
 // }
+
+export {};
+
+declare global {
+  namespace Cypress {
+    interface Chainable<Subject> {
+      loginToAuth0(username: string, password: string): Chainable<Subject>
+    }
+  }
+}
+
+function loginViaAuth0Ui(username: string, password: string) {
+  // App landing page redirects to Auth0.
+  cy.visit('http://127.0.0.1:5173/')
+  cy.get('button').click()
+
+  // Login on Auth0.
+  cy.origin(
+    Cypress.env('auth0_domain'),
+    { args: { username, password } },
+    ({ username, password }) => {
+      cy.get('input#username').type(username)
+      cy.get('input#password').type(password, { log: false })
+      cy.get('.cff0ff2c6').contains('Continue').click()
+    }
+  )
+
+  // Ensure Auth0 has redirected us back to the RWA.
+  cy.url().should('equal', 'http://127.0.0.1:5173/')
+}
+
+Cypress.Commands.add('loginToAuth0', (username: string, password: string) => {
+  const log = Cypress.log({
+    displayName: 'AUTH0 LOGIN',
+    message: [`🔐 Authenticating | ${username}`],
+    // @ts-ignore
+    autoEnd: false,
+  })
+  log.snapshot('before')
+
+  loginViaAuth0Ui(username, password)
+
+  log.snapshot('after')
+  log.end()
+})

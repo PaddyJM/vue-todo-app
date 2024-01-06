@@ -23,7 +23,7 @@ const createTodo = () => {
 </script>
 
 <template>
-  <div class="input-wrap" :class="{ 'input-error': todoState.invalid }">
+  <div class="todo-input" :class="{ 'input-error': todoState.invalid }">
     <input
       type="text"
       placeholder="Enter a todo"
