@@ -15,7 +15,6 @@ import { computed } from 'vue'
 const loading = ref(true)
 const authFailed = ref(false)
 const isVisible = ref(false)
-const hideCompleted = ref(false)
 
 const todoStore = useTodoStore()
 const snackbarStore = useSnackbarStore()
@@ -25,12 +24,6 @@ const { todos } = storeToRefs(todoStore)
 const { nextItem } = storeToRefs(snackbarStore)
 
 const userId = computed(() => auth.user.value.sub)
-const filteredTodos = computed(() => {
-  if (hideCompleted.value) {
-    return todos.value.filter((todo: Todo) => !todo.completed)
-  }
-  return todos.value
-})
 
 onMounted(async () => {
   do {
@@ -115,14 +108,8 @@ const deleteTodo = (index: number) => {
   <main v-else-if="auth.user.value">
     <h1>Create Todo</h1>
     <TodoCreator @create-todo="createTodo" />
-    <div>
-      <h1>Options</h1>
-      <div>
-        <VBtn @click="hideCompleted = !hideCompleted" :color="hideCompleted ? 'green' : 'white'">Hide Completed</VBtn>
-      </div>
-    </div>
-    <ul class="todo-list" v-if="filteredTodos && filteredTodos.length > 0">
-      <TodoItem v-for="(todo, index) in filteredTodos" :key="todo.id" :todo="todo" :index="index"
+    <ul class="todo-list" v-if="todos && todos.length > 0">
+      <TodoItem v-for="(todo, index) in todos" :key="todo.id" :todo="todo" :index="index"
         @toggle-complete="toggleTodoComplete" @toggle-edit="toggleTodoEdit" @update-todo="updateTodo"
         @delete-todo="deleteTodo" />
     </ul>
